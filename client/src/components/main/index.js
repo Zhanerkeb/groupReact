@@ -26,7 +26,7 @@ class Main extends Component  {
             editauthor:'',
             editid:'',
             idGlobal:null,
-
+            blogs:[],
         }
     }
 
@@ -55,7 +55,14 @@ class Main extends Component  {
             description:this.state.description,
             author:this.state.author,
         }
-        this.props.blog.push(data);
+
+        //this.props.blog.push(data);
+        db.collection("blogs").add(data).then(
+            function(doc){
+                console.log("documentId",doc.id)
+            }).catch(function(error){
+            console.log("document error",error);
+        })
         this.setState({
             visible:false,
             id:null,
@@ -63,13 +70,7 @@ class Main extends Component  {
             description:'',
             author:'',
         })
-        db.collection("blogs").add(data)
-            .then(function(docRef) {
-                console.log("Document written with ID: ", docRef.id);
-            })
-            .catch(function(error) {
-                console.error("Error adding document: ", error);
-            });
+
 
     }
     handleDelete=i=>{
@@ -110,18 +111,24 @@ class Main extends Component  {
             editauthor:'',
         })
     }
-
+    async componentDidMount() {
+        const data = await db.collection('blogs').get()
+        return this.setState({
+            blogs:data.docs
+        })
+    }
 
     render() {
        const {blog} = this.props;
+       const {blogs}=this.state;
        const {id,title,description,author,editid,edittitle,editdescription,editauthor}=this.state;
 
-       let blogItem = blog.map((item,i)=>(
+       let blogItem = blogs.map((item,i)=>(
            <Col span={6} key={i}>
                <Card key={i} title="Default size card" extra={<div><p style={{cursor:"pointer"}} onClick={()=>this.handleDelete(i)} >Delete</p><p style={{cursor:"pointer"}}  onClick={()=>this.handleOpenEditModal(item,i)}>Edit</p></div>} style={{ width: 300 }}>
-                   <p>{item.title}</p>
-                   <p>{item.description}</p>
-                   <p>{item.author}</p>
+                   <p>{item.data().title}</p>
+                   <p>{item.data().description}</p>
+                   <p>{item.data().author}</p>
                </Card>
            </Col>
        ))
