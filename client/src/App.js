@@ -5,6 +5,9 @@ import 'antd/dist/antd.css';
 import Main from "./components/main";
 import {BrowserRouter as Router,Switch,Route} from 'react-router-dom';
 import WrappedNormalSignUpForm from "./components/signUp";
+import WrappedNormalSignInForm from "./components/signIn";
+import WrappedNormalResetForm from "./components/reset"
+import Profile from "./components/profile";
 
 const blogs=[
     {
@@ -40,6 +43,10 @@ function App() {
             <Switch>
                 <Route exact path={'/'} component={() => <Main blog={blogs} />}/>
                 <Route exact path={'/signup'} component={WrappedNormalSignUpForm}/>
+                <Route exact path={'/signin'} component={WrappedNormalSignInForm}/>
+                <Route exact path={'/reset'} component={WrappedNormalResetForm}/>
+                <Route exact path={'/profile'} component={Profile}/>
+
             </Switch>
         </Router>
 

@@ -2,6 +2,12 @@ import React,{Component} from 'react'
 import Header from "../header";
 import {Button, Card, Col, Row, Modal, Form,Input} from "antd";
 import FormItem from "antd/es/form/FormItem";
+
+import * as firebase from 'firebase/app';
+import 'firebase/firestore'
+import firebaseConfig from "../../firebaseConfig";
+ const firebaseApp = firebase.initializeApp(firebaseConfig)
+const db = firebase.firestore();
 class Main extends Component  {
     constructor(){
         super();
@@ -20,6 +26,7 @@ class Main extends Component  {
             editauthor:'',
             editid:'',
             idGlobal:null,
+
         }
     }
 
@@ -56,6 +63,14 @@ class Main extends Component  {
             description:'',
             author:'',
         })
+        db.collection("blogs").add(data)
+            .then(function(docRef) {
+                console.log("Document written with ID: ", docRef.id);
+            })
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
+            });
+
     }
     handleDelete=i=>{
       this.props.blog.splice(i,1);
@@ -96,7 +111,8 @@ class Main extends Component  {
         })
     }
 
-render() {
+
+    render() {
        const {blog} = this.props;
        const {id,title,description,author,editid,edittitle,editdescription,editauthor}=this.state;
 

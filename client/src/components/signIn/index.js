@@ -1,24 +1,29 @@
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import React,{Component} from 'react'
-
+import withFirebaseAuth from 'react-with-firebase-auth'
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+import firebaseConfig from "../../firebaseConfig";
 import Header from "../header";
-import {Link} from 'react-router-dom'
-import firebase from 'firebase'
+import {Link,withRouter} from 'react-router-dom'
 
-class SignUp extends Component {
+class SignIn extends Component {
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+
                 // console.log('Received values of form: ', values);
-                firebase.auth().createUserWithEmailAndPassword(values.email,values.password).then(authUser=>{
+                firebase.auth().signInWithEmailAndPassword(values.email,values.password).then(authUser=>{
+                    this.props.history.push('/profile');
                     console.log(authUser)
-                    }).catch(error=>{
-                        console.log(error)
+                }).catch(error=>{
+                    console.log(error)
                 })
             }
         });
     };
+
 
 
     render() {
@@ -29,22 +34,7 @@ class SignUp extends Component {
                 <Header/>
 
                 <Form style={{paddingTop:"100px",width:"80%",margin:"0 auto"}} onSubmit={this.handleSubmit} className="login-form">
-                    <p>Create Your Account</p>
-                    <Form.Item>
-                        {getFieldDecorator('username', {
-                            rules: [
-                                {
-                                    required: true,
-                                    message: 'Please input username!'
-                                }
-                            ],
-                        })(
-                            <Input
-                                prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                                placeholder="Email"
-                            />,
-                        )}
-                    </Form.Item>
+                    <p>Get Into Your Account</p>
                     <Form.Item>
                         {getFieldDecorator('email', {
                             rules: [{
@@ -52,10 +42,10 @@ class SignUp extends Component {
                                 message: 'The input is not valid E-mail!',
                             },
                                 {
-                                required: true,
-                                message: 'Please input your email!'
-                            }
-                                ],
+                                    required: true,
+                                    message: 'Please input your email!'
+                                }
+                            ],
                         })(
                             <Input
                                 prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
@@ -83,9 +73,9 @@ class SignUp extends Component {
                             Forgot password
                         </Link>
                         <Button type="primary" style={{display:"block",margin:"0 auto"}} htmlType="submit" className="login-form-button">
-                            Register
+                            Login
                         </Button>
-                        Or <Link to={'/signin'}>login now!</Link>
+                        Or <Link to={'/signup'}>register now!</Link>
                     </Form.Item>
                 </Form>
             </div>
@@ -93,6 +83,6 @@ class SignUp extends Component {
     }
 }
 
-const WrappedNormalSignUpForm = Form.create({ name: 'normal_login' })(SignUp);
+const WrappedNormalSignInForm = Form.create({ name: 'normal_login' })(SignIn);
 
-export default WrappedNormalSignUpForm;
+export default withRouter(WrappedNormalSignInForm);
